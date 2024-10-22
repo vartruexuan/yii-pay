@@ -1,6 +1,6 @@
 <?php
 
-namespace vartruexuan\pay;
+namespace vartruexuan\pay\log;
 
 use Psr\Log\LoggerInterface;
 
@@ -90,6 +90,8 @@ class Logger implements LoggerInterface
         $paramsNames = array_map(function ($n) use ($placeholderLeft, $placeholderRight) {
             return "/" . preg_quote($placeholderLeft . $n . $placeholderRight) . "/";
         }, array_keys($replaceArr));
-        return preg_replace($paramsNames, array_values($replaceArr), $str);
+        return preg_replace($paramsNames, array_map(function ($n) {
+            return is_string($n) ? $n : var_export($n, true);
+        }, array_values($replaceArr)), $str);
     }
 }

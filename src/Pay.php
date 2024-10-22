@@ -3,10 +3,15 @@
 namespace vartruexuan\pay;
 
 
+use Psr\Http\Client\ClientInterface;
 use Psr\Log\LoggerInterface;
+use vartruexuan\pay\http\HttpClientArtful;
+use vartruexuan\pay\log\Logger;
+use Yansongda\Pay\Contract\HttpClientInterface;
 use Yansongda\Pay\Exception\ContainerException;
 use yii\base\StaticInstanceTrait;
 use yii\helpers\ArrayHelper;
+use vartruexuan\pay\http\HttpClient;
 use \Yansongda\Pay\Pay as YsdPay;
 
 /**
@@ -25,12 +30,12 @@ class Pay extends \yii\base\Component
      *
      * @var array
      */
-    public array $config;
+    public array $config = [];
 
 
     public function __call($name, $params)
     {
-        if (YsdPay::has($name)) {
+        if (!$this->hasMethod($name)) {
             if (!empty($params)) {
                 YsdPay::config(...$params);
             }
@@ -55,26 +60,84 @@ class Pay extends \yii\base\Component
     private function initPay()
     {
         // 初始化配置
-        YsdPay::config($this->config,function (){
-            return new Container();
-        });
+        YsdPay::config((array)$this->config);
         // 配置日志
-        YsdPay::set(LoggerInterface::class, new Logger());
+        $this->initLog();
+        // 初始化 http 客户端
+        $this->initHttpClient();
+    }
+
+
+    /**
+     * 初始化日志组件
+     *
+     * @return void
+     * @throws \Yansongda\Artful\Exception\ContainerException
+     */
+    public function initLog()
+    {
+        $interfaces = [
+            'Yansongda\Pay\Contract\LoggerInterface' => Logger::class,
+            'Yansongda\Artful\Contract\LoggerInterface' => Logger::class,
+        ];
+        foreach ($interfaces as $interface => $client) {
+            if (interface_exists($interface)) {
+                YsdPay::set($interface, new $client());
+            }
+        }
+    }
+
+    /**
+     * 初始化 http 客户端
+     *
+     * @return void
+     * @throws \Yansongda\Artful\Exception\ContainerException
+     */
+    public function initHttpClient()
+    {
+        $interfaces = [
+            'Yansongda\Pay\Contract\HttpClientInterface' => HttpClient::class,
+            'Yansongda\Artful\Contract\HttpClientInterface' => HttpClientArtful::class,
+        ];
+        foreach ($interfaces as $interface => $client) {
+            if (interface_exists($interface)) {
+                YsdPay::set($interface, new $client($this->getConfig('http', [])));
+            }
+        }
     }
 
 
     /**
      * 获取配置
      *
-     * @param string $key
+     * @param string|null $key
+     * @param null $default
      * @return array
-     * @throws \Exception
      */
-    public function getConfig($key)
+    public function getConfig(string $key = null, $default = null)
     {
         if ($key) {
-            return ArrayHelper::getValue($this->config, $key);
+            return ArrayHelper::getValue($this->config, $key, $default);
         }
         return $this->config;
+    }
+
+    /**
+     * 设置配置
+     *
+     * @param $config
+     * @return $this
+     * @throws \Yansongda\Artful\Exception\ContainerException
+     */
+    public function setConfig(array $config, bool $force = true)
+    {
+        if ($force) {
+            // 强制覆盖
+            $config['_force'] = true;
+        }
+        $this->config = $config;
+        YsdPay::config($this->config);
+        $this->init();
+        return $this;
     }
 }
