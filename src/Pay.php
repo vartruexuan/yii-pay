@@ -3,6 +3,7 @@
 namespace vartruexuan\pay;
 
 
+use Psr\Log\LoggerInterface;
 use Yansongda\Pay\Exception\ContainerException;
 use yii\base\StaticInstanceTrait;
 use yii\helpers\ArrayHelper;
@@ -30,7 +31,7 @@ class Pay extends \yii\base\Component
     public function __call($name, $params)
     {
         if (YsdPay::has($name)) {
-            if (!empty($config)) {
+            if (!empty($params)) {
                 YsdPay::config(...$params);
             }
             return YsdPay::get($name);
