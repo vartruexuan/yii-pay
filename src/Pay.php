@@ -125,9 +125,9 @@ class Pay extends \yii\base\Component
     /**
      * 设置配置
      *
-     * @param $config
+     * @param array $config
+     * @param bool $force
      * @return $this
-     * @throws \Yansongda\Artful\Exception\ContainerException
      */
     public function setConfig(array $config, bool $force = true)
     {
