@@ -54,7 +54,9 @@ class Pay extends \yii\base\Component
     private function initPay()
     {
         // 初始化配置
-        YsdPay::config($this->config);
+        YsdPay::config($this->config,function (){
+            return new Container();
+        });
     }
 
 

@@ -10,7 +10,9 @@
         }
     ],
     "require": {
-        "php": ">=7.4 || >=8.0"
+        "php": ">=7.4 || >=8.0",
+        "psr/container": "^2.0",
+        "yansongda/pay": "^3.0"
     },
     "require-dev": {
         "brainmaestro/composer-git-hooks": "^2.8",
