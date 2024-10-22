@@ -57,6 +57,8 @@ class Pay extends \yii\base\Component
         YsdPay::config($this->config,function (){
             return new Container();
         });
+        // 配置日志
+        YsdPay::set(LoggerInterface::class, new Logger());
     }
 
 
