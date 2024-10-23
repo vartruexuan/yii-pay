@@ -109,7 +109,6 @@ composer require vartruexuan/yii-pay
     'log' => [
         'traceLevel' => YII_DEBUG ? 3 : 0,
         'targets' => [
-            // 流输出日志
             [
                 'class' => 'yii\log\FileTarget',
                 'levels' => ['error', 'info', 'warning'],
