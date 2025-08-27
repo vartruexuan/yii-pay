@@ -2,7 +2,6 @@
 
 [![php](https://img.shields.io/badge/php-^7.4|^8.0-brightgreen.svg?maxAge=2592000)](https://github.com/php/php-src)
 [![Latest Stable Version](https://img.shields.io/packagist/v/vartruexuan/yii-pay)](https://packagist.org/packages/vartruexuan/yii-pay)
-[![Total Downloads](https://img.shields.io/packagist/dt/vartruexuan/yii-pay)](https://packagist.org/packages/vartruexuan/yii-pay)
 [![License](https://img.shields.io/packagist/l/vartruexuan/yii-pay)](https://github.com/vartruexuan/yii-pay)
 
 # 概述
